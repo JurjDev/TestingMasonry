@@ -298,64 +298,58 @@ UILabel *lblMessage = nil;
 
 - (void) updateProgress:(double)progress {
     
-    if (progressConstraint != nil ) {
-        
-        [progressConstraint setActive:false];
-    }
-    
-    progressConstraint = [viewProgress.widthAnchor constraintEqualToAnchor: [self view].widthAnchor multiplier: progress];
-    [progressConstraint setActive: YES];
+    UIView *superview = self.view;
+
+    [viewProgress mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop);
+        make.width.equalTo(superview).multipliedBy(progress);
+        make.height.equalTo(@32);
+        make.leading.equalTo(superview);
+    }];
 }
 
 - (void) setupConstrains {
     
     UIView *navView = [self navigationController].view;
     
+    UIView *superview = self.view;
+    
     if (navView == nil) { return; }
     
-    [self progressView].translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [NSLayoutConstraint activateConstraints:@[
-        [viewProgress.topAnchor constraintEqualToAnchor: [self view].safeAreaLayoutGuide.topAnchor],
-        [viewProgress.heightAnchor constraintEqualToConstant:32],
-        [viewProgress.leadingAnchor constraintEqualToAnchor: [self view].leadingAnchor]
-    ]];
-    
+    [self progressView];
     [self updateProgress: 0];
     
-    [self timerLabel].translatesAutoresizingMaskIntoConstraints = NO;
-    [NSLayoutConstraint activateConstraints:@[
-        [lblTimer.widthAnchor constraintEqualToAnchor: [self view].widthAnchor multiplier:0.45],
-        [lblTimer.heightAnchor constraintEqualToConstant:45],
-        [lblTimer.topAnchor constraintEqualToAnchor: viewProgress.bottomAnchor constant:32],
-        [lblTimer.centerXAnchor constraintEqualToAnchor: [self view].centerXAnchor]
-    ]];
+    [self timerLabel];
+
+    [lblTimer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(superview.mas_width).multipliedBy(0.45);
+        make.height.equalTo(@45);
+        make.top.equalTo(viewProgress.mas_bottom).with.offset(32);
+        make.centerX.equalTo(superview.mas_centerX);
+    }];
     
-    [self questionLabel].translatesAutoresizingMaskIntoConstraints = NO;
-    [NSLayoutConstraint activateConstraints:@[
-        [lblQuestion.topAnchor constraintEqualToAnchor:lblTimer.bottomAnchor constant:24],
-        [lblQuestion.leadingAnchor constraintEqualToAnchor: [self view].safeAreaLayoutGuide.leadingAnchor constant:16],
-        [lblQuestion.trailingAnchor constraintEqualToAnchor: [self view].safeAreaLayoutGuide.trailingAnchor constant:-16]
-    ]];
+    [self questionLabel];
+    [lblQuestion mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(lblTimer.mas_bottom).with.offset(24);
+        make.right.equalTo(superview.mas_safeAreaLayoutGuideRight).with.offset(-16);
+        make.left.equalTo(superview.mas_safeAreaLayoutGuideLeft).with.offset(16);
+    }];
     
-    [self messageLabel].translatesAutoresizingMaskIntoConstraints = NO;
-    [NSLayoutConstraint activateConstraints:@[
-        [lblMessage.topAnchor constraintEqualToAnchor: navView.topAnchor],
-        [lblMessage.bottomAnchor constraintEqualToAnchor: navView.bottomAnchor],
-        [lblMessage.leadingAnchor constraintEqualToAnchor: navView.leadingAnchor],
-        [lblMessage.trailingAnchor constraintEqualToAnchor: navView.trailingAnchor]
-    ]];
+    [self messageLabel];
+    [lblMessage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(navView);
+    }];
     
     [self trueButton];
     [self falseButton];
     
-    [self buttonsStackView].translatesAutoresizingMaskIntoConstraints = NO;
-    [NSLayoutConstraint activateConstraints:@[
-        [svButtons.leadingAnchor constraintEqualToAnchor:lblQuestion.leadingAnchor],
-        [svButtons.trailingAnchor constraintEqualToAnchor:lblQuestion.trailingAnchor],
-        [svButtons.topAnchor constraintEqualToAnchor:lblQuestion.bottomAnchor constant:16],
-        [svButtons.heightAnchor constraintEqualToConstant:80]
-    ]];
+    [self buttonsStackView];
+    [svButtons mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.leading.equalTo(lblQuestion.mas_leading);
+        make.trailing.equalTo(lblQuestion.mas_trailing);
+        make.top.equalTo(lblQuestion.mas_bottom).with.offset(16);
+        make.height.equalTo(@80);
+    }];
 }
 
 @end
