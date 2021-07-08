@@ -352,4 +352,31 @@ UILabel *lblMessage = nil;
     }];
 }
 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super willTransitionToTraitCollection: newCollection withTransitionCoordinator: coordinator];
+    
+    NSNumber *isPortrait = nil;
+    
+    switch (UIDevice.currentDevice.orientation) {
+        case UIDeviceOrientationPortrait:
+        case UIDeviceOrientationPortraitUpsideDown:
+            isPortrait = @1;
+            break;
+        case UIDeviceOrientationLandscapeRight:
+        case UIDeviceOrientationLandscapeLeft:
+            isPortrait = 0;
+            break;
+        default: isPortrait = nil;
+    }
+    
+    if (isPortrait == nil) { return; }
+    
+    [lblTimer mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo( isPortrait.boolValue ? @45 : @65  );
+        
+        lblTimer.font = [UIFont systemFontOfSize: isPortrait.boolValue ? 20 : 32  weight: UIFontWeightLight];
+    }];
+}
+
 @end
